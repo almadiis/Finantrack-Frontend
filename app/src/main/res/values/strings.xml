@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Finantrack</string>
+    <string name="title_home">Inicio</string>
+    <string name="title_transactions">Transacciones</string>
+    <string name="title_presupuestos">Presupuestos</string>
+    <string name="title_perfil">Perfil</string>
+    <string name="dia">Día</string>
+</resources>

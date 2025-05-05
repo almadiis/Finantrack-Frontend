@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="12dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/descripcionTransaccion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Descripción"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/montoTransaccion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Monto"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/fechaTransaccion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Fecha"
+        android:textSize="12sp" />
+</LinearLayout>
