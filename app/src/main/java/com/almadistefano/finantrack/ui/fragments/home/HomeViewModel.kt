@@ -1,5 +1,6 @@
 package com.almadistefano.finantrack.ui.fragments.home
 
+import android.content.Context.MODE_PRIVATE
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -10,7 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class HomeViewModel(repository: Repository) : ViewModel() {
+class HomeViewModel(repository: Repository, userId : Int) : ViewModel() {
 
     val repository: Repository = repository
     private val _cuentas = MutableStateFlow<List<Cuenta>>(emptyList())
@@ -18,26 +19,18 @@ class HomeViewModel(repository: Repository) : ViewModel() {
     private var _fragmentShowed : String? = null
     val fragmentShowed : String?
         get() = _fragmentShowed
+    val userId : Int = userId
 
-    /**
-     * Establece el fragmento actualmente mostrado.
-     *
-     * @param fragmentShowed Nombre del fragmento mostrado.
-     */
-    fun setFragmentShowed(fragmentShowed:String){
-        _fragmentShowed = fragmentShowed
-    }
 
     init {
         sincronizarCuentas()
-        Log.d("HomeViewModel, init", "Cuentas recibidas: $_cuentas")
     }
 
     private fun fetchCuentas() {
         viewModelScope.launch {
             try {
                 // Primero, intenta obtener las cuentas de la base local
-                repository.getCuentas().collect {
+                repository.getCuentas(userId).collect {
                     _cuentas.value = it
                 }
             } catch (e: Exception) {
@@ -49,7 +42,7 @@ class HomeViewModel(repository: Repository) : ViewModel() {
     // Sincronizar con la API remota y guardar en local
     fun sincronizarCuentas() {
         viewModelScope.launch {
-            repository.syncCuentas()
+            repository.syncCuentas(userId)
             fetchCuentas()  // Recargar las cuentas después de sincronizar
         }
     }
@@ -58,13 +51,14 @@ class HomeViewModel(repository: Repository) : ViewModel() {
 
 @Suppress("UNCHECKED_CAST")
 class HomeViewModelFactory(
-    private val repository: Repository
+    private val repository: Repository,
+    private val userId: Int
 ) : ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
-            return HomeViewModel(repository) as T
+            return HomeViewModel(repository,userId) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

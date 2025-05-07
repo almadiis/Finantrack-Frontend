@@ -79,6 +79,9 @@ interface FinantrackAPIInterface {
     @GET("api/usuarios")
     suspend fun getAllUsuarios(): List<Usuario>
 
+    @POST("api/usuarios/login")
+    suspend fun loginUsuario(@Body request: LoginRequest): Usuario?
+
     @POST("api/usuarios")
     suspend fun postUsuario(@Body usuario: Usuario): Usuario
 

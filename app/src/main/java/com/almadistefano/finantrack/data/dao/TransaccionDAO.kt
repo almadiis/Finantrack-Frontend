@@ -8,9 +8,13 @@ import com.almadistefano.finantrack.model.Transaccion
 import kotlinx.coroutines.flow.Flow
 @Dao
 interface TransaccionDao {
-    @Query("SELECT * FROM transacciones")
-    fun getAll(): Flow<List<Transaccion>>
+    @Query("SELECT * FROM transacciones WHERE usuarioId = :usuarioId")
+    fun getAll(usuarioId: Int): Flow<List<Transaccion>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(transacciones: List<Transaccion>)
+
+    @Query("SELECT * FROM transacciones WHERE usuarioId = :usuarioId")
+    fun getTransaccionesByUsuario(usuarioId: Int): Flow<List<Transaccion>>
+
 }

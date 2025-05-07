@@ -12,5 +12,6 @@ data class Usuario(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val nombre: String,
-    val correo: String
+    val correo: String,
+    val password: String,
 ) : Serializable, Parcelable

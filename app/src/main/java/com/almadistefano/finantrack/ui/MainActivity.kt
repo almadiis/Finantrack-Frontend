@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val userId = getSharedPreferences("user_prefs", MODE_PRIVATE).getInt("usuario_id", -1)
 
 
         // Configura el diseño y la ventana para ajuste de sistema

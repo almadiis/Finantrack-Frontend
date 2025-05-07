@@ -18,5 +18,7 @@ data class Presupuesto(
     val periodo: String,
     val fechaInicio: Date,
     val fechaFin: Date,
-    val categoriaId: Int
+    val categoriaId: Int,
+    val usuarioId: Int // 🔑
+
 ) : Serializable, Parcelable

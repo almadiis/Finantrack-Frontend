@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "92a2866bd28ef250201c794379b1ed92",
+    "identityHash": "663c011972bbed3de822a49b6f2d3502",
     "entities": [
       {
         "tableName": "cuentas",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `nombre` TEXT NOT NULL, `saldo` REAL NOT NULL, `tipo` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `nombre` TEXT NOT NULL, `saldo` REAL NOT NULL, `tipo` TEXT NOT NULL, `usuario_id` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -30,6 +30,12 @@
             "fieldPath": "tipo",
             "columnName": "tipo",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "usuario_id",
+            "columnName": "usuario_id",
+            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -72,7 +78,7 @@
       },
       {
         "tableName": "presupuestos",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `montoMaximo` REAL NOT NULL, `periodo` TEXT NOT NULL, `fechaInicio` INTEGER NOT NULL, `fechaFin` INTEGER NOT NULL, `categoriaId` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `montoMaximo` REAL NOT NULL, `periodo` TEXT NOT NULL, `fechaInicio` INTEGER NOT NULL, `fechaFin` INTEGER NOT NULL, `categoriaId` INTEGER NOT NULL, `usuarioId` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -109,6 +115,12 @@
             "columnName": "categoriaId",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "usuarioId",
+            "columnName": "usuarioId",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -120,7 +132,7 @@
       },
       {
         "tableName": "transacciones",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `monto` REAL NOT NULL, `fecha` TEXT NOT NULL, `descripcion` TEXT NOT NULL, `tipo` TEXT NOT NULL, `cuentaNombre` TEXT NOT NULL, `categoriaNombre` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `monto` REAL NOT NULL, `fecha` TEXT NOT NULL, `descripcion` TEXT NOT NULL, `tipo` TEXT NOT NULL, `cuentaNombre` TEXT NOT NULL, `categoriaNombre` TEXT NOT NULL, `usuarioId` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -163,6 +175,12 @@
             "columnName": "categoriaNombre",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "usuarioId",
+            "columnName": "usuarioId",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -174,7 +192,7 @@
       },
       {
         "tableName": "usuarios",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `nombre` TEXT NOT NULL, `correo` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `nombre` TEXT NOT NULL, `correo` TEXT NOT NULL, `password` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -193,6 +211,12 @@
             "columnName": "correo",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "password",
+            "columnName": "password",
+            "affinity": "TEXT",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -205,7 +229,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '92a2866bd28ef250201c794379b1ed92')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '663c011972bbed3de822a49b6f2d3502')"
     ]
   }
 }

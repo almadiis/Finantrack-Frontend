@@ -15,5 +15,7 @@ data class Transaccion(
     val descripcion: String,
     val tipo: String,
     val cuentaNombre: String,
-    val categoriaNombre: String
+    val categoriaNombre: String,
+    val usuarioId: Int // 🔑
+
 ) : Serializable, Parcelable

@@ -11,11 +11,8 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface CuentaDao {
 
-    @Query("SELECT * FROM cuentas")
-    fun getAllCuentas(): Flow<List<Cuenta>>
-
-    @Query("SELECT * FROM cuentas WHERE id = :id")
-    suspend fun getCuentaByUser(id: Int): Cuenta?
+    @Query("SELECT * FROM cuentas WHERE usuario_id = :id")
+    fun getAllCuentas(id: Int): Flow<List<Cuenta>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCuenta(cuenta: List<Cuenta>)

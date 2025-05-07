@@ -23,4 +23,8 @@ interface PresupuestoDao {
     @Query("SELECT * FROM presupuestos")
     fun obtenerPresupuestosConCategoria(): Flow<List<PresupuestoConCategoria>>
 
+    @Query("SELECT * FROM presupuestos WHERE usuarioId = :usuarioId")
+    fun getPresupuestosByUsuario(usuarioId: Int): Flow<List<Presupuesto>>
+
+
 }
