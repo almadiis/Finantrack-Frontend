@@ -16,6 +16,7 @@ import com.almadistefano.finantrack.data.Repository
 import kotlinx.coroutines.launch
 import androidx.core.content.edit
 import com.almadistefano.finantrack.model.LoginRequest
+import com.almadistefano.finantrack.utils.SyncManager
 
 class LoginActivity : AppCompatActivity() {
 
@@ -31,10 +32,10 @@ class LoginActivity : AppCompatActivity() {
 
         repository = Repository(
             LocalDataSource(
-                db.cuentasDao(),
-                db.categoriasDao(),
-                db.presupuestosDao(),
-                db.transaccionesDao(),
+                db.cuentaDao(),
+                db.categoriaDao(),
+                db.presupuestoDao(),
+                db.transaccionDao(),
                 db.usuarioDao()
             ),
             RemoteDataSource()
@@ -51,19 +52,21 @@ class LoginActivity : AppCompatActivity() {
             val password = etPassword.text.toString()
 
             lifecycleScope.launch {
-                val login = LoginRequest(username, password)
-                val user = repository.remote.loginUsuario(login)
+                val user = repository.loginUsuario(username, password)
                 if (user != null) {
-                    //LOGIN CORRECTO
-
                     val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
-                    prefs.edit() { putInt("usuario_id", user.id) }
+                    prefs.edit { putInt("usuario_id", user.id) }
+
+                    // 🔁 Sincronizar después del login
+                    SyncManager(repository).syncAll(user.id)
+
                     startActivity(Intent(this@LoginActivity, MainActivity::class.java))
                     finish()
                 } else {
                     Toast.makeText(this@LoginActivity, "Credenciales inválidas", Toast.LENGTH_SHORT).show()
                 }
             }
+
         }
 
         btnRegister.setOnClickListener {

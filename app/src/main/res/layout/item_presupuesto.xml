@@ -1,21 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="12dp"
-    android:orientation="vertical">
+    android:layout_margin="8dp"
+    card_view:cardCornerRadius="12dp"
+    card_view:cardElevation="4dp">
 
-    <TextView
-        android:id="@+id/nombrePresupuesto"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Nombre presupuesto"
-        android:textSize="16sp" />
+        android:padding="16dp">
 
-    <TextView
-        android:id="@+id/montoPresupuesto"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Monto"
-        android:textSize="14sp" />
-</LinearLayout>
+        <!-- Contenido de texto -->
+        <LinearLayout
+            android:id="@+id/layoutContenido"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@id/btnEliminarPresupuesto"
+            android:layout_alignParentTop="true">
+
+            <TextView
+                android:id="@+id/tvCategoriaPresupuesto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Alimentación"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvMontoPresupuesto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="100.00 €"
+                android:textSize="14sp"
+                android:textColor="#444" />
+
+            <TextView
+                android:id="@+id/tvPeriodoPresupuesto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Del 01/05/2025 al 31/05/2025"
+                android:textSize="12sp"
+                android:textColor="#777"
+                android:layout_marginTop="4dp" />
+        </LinearLayout>
+
+        <!-- Botón de eliminar -->
+        <ImageButton
+            android:id="@+id/btnEliminarPresupuesto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:src="@android:drawable/ic_menu_delete"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Eliminar"
+            android:tint="@android:color/holo_red_dark"
+            android:padding="4dp" />
+
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

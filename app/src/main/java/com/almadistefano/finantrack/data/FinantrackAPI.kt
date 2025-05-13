@@ -5,15 +5,31 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import com.almadistefano.finantrack.model.*
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Response
 import retrofit2.http.*
 
 class FinantrackAPI {
 
     companion object {
         const val BASE_URL = "http://10.0.2.2:8081/"
+
         fun getRetrofit2Api(): FinantrackAPIInterface {
-            return Retrofit.Builder().baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create()).build()
+            // Añade logging
+            val logging = HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            }
+
+            val client = OkHttpClient.Builder()
+                .addInterceptor(logging)
+                .build()
+
+            return Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .client(client) // Usa el cliente con logging
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
                 .create(FinantrackAPIInterface::class.java)
         }
     }
@@ -79,14 +95,20 @@ interface FinantrackAPIInterface {
     @GET("api/usuarios")
     suspend fun getAllUsuarios(): List<Usuario>
 
+    @GET("api/usuarios/{id}")
+    suspend fun getUsuario(@Path("id") id: Int): Response<Usuario>
+
     @POST("api/usuarios/login")
     suspend fun loginUsuario(@Body request: LoginRequest): Usuario?
 
     @POST("api/usuarios")
     suspend fun postUsuario(@Body usuario: Usuario): Usuario
 
-    @PUT("api/usuarios/{id}")
-    suspend fun updateUsuario(@Path("id") id: Int, @Body usuario: Usuario): Usuario
+    @PUT("/api/usuarios/{id}")
+    suspend fun actualizarUsuario(
+        @Path("id") id: Int,
+        @Body usuario: Usuario
+    ): Response<Usuario>
 
     @DELETE("api/usuarios/{id}")
     suspend fun deleteUsuario(@Path("id") id: Int): Unit

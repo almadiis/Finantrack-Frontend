@@ -5,9 +5,8 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import com.almadistefano.finantrack.model.Cuenta
 import com.almadistefano.finantrack.model.Presupuesto
-import com.almadistefano.finantrack.model.PresupuestoConCategoria
+import com.almadistefano.finantrack.model.PresupuestoConUsuarioYCategoria
 import kotlinx.coroutines.flow.Flow
 
 
@@ -21,10 +20,13 @@ interface PresupuestoDao {
 
     @Transaction
     @Query("SELECT * FROM presupuestos")
-    fun obtenerPresupuestosConCategoria(): Flow<List<PresupuestoConCategoria>>
+    fun obtenerPresupuestosConUsuarioYCategoria(): Flow<List<PresupuestoConUsuarioYCategoria>>
 
-    @Query("SELECT * FROM presupuestos WHERE usuarioId = :usuarioId")
+
+    @Query("SELECT * FROM presupuestos WHERE usuario_id = :usuarioId")
     fun getPresupuestosByUsuario(usuarioId: Int): Flow<List<Presupuesto>>
 
+    @Query("DELETE FROM presupuestos WHERE id = :presupuestoId")
+    suspend fun eliminarPresupuestos(presupuestoId: Int)
 
 }

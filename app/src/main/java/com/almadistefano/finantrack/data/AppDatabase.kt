@@ -11,15 +11,14 @@ import com.almadistefano.finantrack.model.Presupuesto
 import com.almadistefano.finantrack.model.Transaccion
 import com.almadistefano.finantrack.model.Usuario
 
-
 @Database(
     entities = [Cuenta::class, Categoria::class, Presupuesto::class, Transaccion::class, Usuario::class],
     version = 1
 )
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun cuentasDao(): CuentaDao
-    abstract fun categoriasDao(): CategoriaDao
-    abstract fun presupuestosDao(): PresupuestoDao
-    abstract fun transaccionesDao(): TransaccionDao
+    abstract fun cuentaDao(): CuentaDao
+    abstract fun categoriaDao(): CategoriaDao
+    abstract fun presupuestoDao(): PresupuestoDao
+    abstract fun transaccionDao(): TransaccionDao
     abstract fun usuarioDao(): UsuarioDao
 }

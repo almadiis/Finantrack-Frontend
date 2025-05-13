@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "663c011972bbed3de822a49b6f2d3502",
+    "identityHash": "8cbad48a32dc209825f824a23652cd6f",
     "entities": [
       {
         "tableName": "cuentas",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `nombre` TEXT NOT NULL, `saldo` REAL NOT NULL, `tipo` TEXT NOT NULL, `usuario_id` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `nombre` TEXT NOT NULL, `saldo` REAL NOT NULL, `tipo` TEXT NOT NULL, `usuario_id` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -33,14 +33,14 @@
             "notNull": true
           },
           {
-            "fieldPath": "usuario_id",
+            "fieldPath": "usuarioId",
             "columnName": "usuario_id",
             "affinity": "INTEGER",
             "notNull": true
           }
         ],
         "primaryKey": {
-          "autoGenerate": true,
+          "autoGenerate": false,
           "columnNames": [
             "id"
           ]
@@ -78,7 +78,7 @@
       },
       {
         "tableName": "presupuestos",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `montoMaximo` REAL NOT NULL, `periodo` TEXT NOT NULL, `fechaInicio` INTEGER NOT NULL, `fechaFin` INTEGER NOT NULL, `categoriaId` INTEGER NOT NULL, `usuarioId` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `montoMaximo` REAL NOT NULL, `periodo` TEXT NOT NULL, `fechaInicio` TEXT NOT NULL, `fechaFin` TEXT NOT NULL, `categoria_id` INTEGER NOT NULL, `usuario_id` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -101,24 +101,24 @@
           {
             "fieldPath": "fechaInicio",
             "columnName": "fechaInicio",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
             "fieldPath": "fechaFin",
             "columnName": "fechaFin",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
             "fieldPath": "categoriaId",
-            "columnName": "categoriaId",
+            "columnName": "categoria_id",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
             "fieldPath": "usuarioId",
-            "columnName": "usuarioId",
+            "columnName": "usuario_id",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -132,7 +132,7 @@
       },
       {
         "tableName": "transacciones",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `monto` REAL NOT NULL, `fecha` TEXT NOT NULL, `descripcion` TEXT NOT NULL, `tipo` TEXT NOT NULL, `cuentaNombre` TEXT NOT NULL, `categoriaNombre` TEXT NOT NULL, `usuarioId` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `monto` REAL NOT NULL, `fecha` TEXT NOT NULL, `descripcion` TEXT NOT NULL, `tipo` TEXT NOT NULL, `categoria_id` INTEGER NOT NULL, `cuenta_id` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -165,20 +165,14 @@
             "notNull": true
           },
           {
-            "fieldPath": "cuentaNombre",
-            "columnName": "cuentaNombre",
-            "affinity": "TEXT",
+            "fieldPath": "categoriaId",
+            "columnName": "categoria_id",
+            "affinity": "INTEGER",
             "notNull": true
           },
           {
-            "fieldPath": "categoriaNombre",
-            "columnName": "categoriaNombre",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "usuarioId",
-            "columnName": "usuarioId",
+            "fieldPath": "cuentaId",
+            "columnName": "cuenta_id",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -229,7 +223,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '663c011972bbed3de822a49b6f2d3502')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8cbad48a32dc209825f824a23652cd6f')"
     ]
   }
 }

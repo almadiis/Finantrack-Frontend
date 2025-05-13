@@ -1,20 +1,90 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollHome"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    android:padding="16dp">
+    android:paddingTop="32dp"
+    android:paddingBottom="32dp"
+    android:paddingHorizontal="16dp">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:padding="8dp">
 
-
-        <!-- Lista de cuentas -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvCuentas"
-            android:layout_width="match_parent"
+        <!-- Estado del balance -->
+        <TextView
+            android:id="@+id/tvEstadoBalance"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp" />
+            android:text="POSITIVO"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#2E7D32"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Balance de la cuenta -->
+        <TextView
+            android:id="@+id/tvBalanceNumero"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0.00 €"
+            android:textColor="#2E7D32"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="32dp" />
+
+        <!-- Gráfico de gastos -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gastos"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:layout_marginBottom="8dp"/>
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/chartGastos"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/tvTotalGastos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total gastos: 0.00 €"
+            android:textStyle="italic"
+            android:textSize="14sp"
+            android:textColor="#B71C1C"
+            android:layout_marginBottom="32dp"/>
+
+        <!-- Gráfico de ingresos -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ingresos"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:layout_marginBottom="8dp"/>
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/chartIngresos"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/tvTotalIngresos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total ingresos: 0.00 €"
+            android:textStyle="italic"
+            android:textSize="14sp"
+            android:textColor="#00695C"
+            android:layout_marginBottom="32dp"/>
     </LinearLayout>
 </ScrollView>

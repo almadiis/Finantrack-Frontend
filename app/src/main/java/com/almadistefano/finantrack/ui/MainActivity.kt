@@ -1,19 +1,26 @@
 package com.almadistefano.finantrack.ui
 
+import RemoteDataSource
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
+import com.almadistefano.finantrack.FinantrackApplication
 import com.almadistefano.finantrack.R
+import com.almadistefano.finantrack.data.LocalDataSource
+import com.almadistefano.finantrack.data.Repository
 import com.almadistefano.finantrack.databinding.ActivityMainBinding
 import com.almadistefano.finantrack.ui.fragments.perfil.PerfilFragment
 import com.almadistefano.finantrack.ui.fragments.presupuestos.PresupuestosFragment
 import com.almadistefano.finantrack.ui.fragments.transacciones.TransaccionesFragment
+import com.almadistefano.finantrack.utils.SyncManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -29,8 +36,26 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val userId = getSharedPreferences("user_prefs", MODE_PRIVATE).getInt("usuario_id", -1)
 
+        // Sincroniza los datos al iniciar la aplicación
+        val userId = getSharedPreferences("user_prefs", MODE_PRIVATE).getInt("usuario_id", -1)
+        if (userId != -1) {
+            val db = (application as FinantrackApplication).appDB
+            val repository = Repository(
+                LocalDataSource(
+                    db.cuentaDao(),
+                    db.categoriaDao(),
+                    db.presupuestoDao(),
+                    db.transaccionDao(),
+                    db.usuarioDao()
+                ),
+                RemoteDataSource()
+            )
+
+            lifecycleScope.launch {
+                SyncManager(repository).syncAll(userId)
+            }
+        }
 
         // Configura el diseño y la ventana para ajuste de sistema
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
@@ -57,5 +82,4 @@ class MainActivity : AppCompatActivity() {
         NavigationUI.setupWithNavController(bottomNav, navController)
 
     }
-
 }

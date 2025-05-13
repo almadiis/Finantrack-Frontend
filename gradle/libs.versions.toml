@@ -1,6 +1,7 @@
 [versions]
 activityKtx = "1.10.1"
 agp = "8.9.2"
+androidxRecyclerview = "1.3.1"
 converterGson = "2.10.0"
 glide = "4.16.0"
 kotlin = "2.0.21"
@@ -17,6 +18,7 @@ lifecycleViewmodelKtx = "2.6.1"
 mpandroidchart = "v3.1.0"
 navigationFragmentKtx = "2.6.0"
 navigationUiKtx = "2.6.0"
+recyclerviewVersion = "1.2.1"
 retrofit = "2.9.0"
 retrofitVersion = "2.10.0"
 roomCompiler = "2.7.1"
@@ -24,10 +26,13 @@ roomKtx = "2.7.0"
 roomKtxVersion = "2.6.1"
 roomRuntime = "2.6.1"
 swiperefreshlayout = "1.1.0"
+recyclerview = "1.4.0"
 
 [libraries]
 androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activityKtx" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-recyclerview-v121 = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerviewVersion" }
+androidx-recyclerview-v131 = { module = "androidx.recyclerview:recyclerview", version.ref = "androidxRecyclerview" }
 androidx-room-compiler-v271 = { module = "androidx.room:room-compiler", version.ref = "roomCompiler" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomKtx" }
 androidx-room-ktx-v261 = { module = "androidx.room:room-ktx", version.ref = "roomKtxVersion" }
@@ -50,6 +55,7 @@ androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navi
 androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigationUiKtx" }
 mpandroidchart = { module = "com.github.PhilJay:MPAndroidChart", version.ref = "mpandroidchart" }
 retrofit-v2100 = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofitVersion" }
+androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

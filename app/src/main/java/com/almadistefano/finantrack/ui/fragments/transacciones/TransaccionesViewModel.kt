@@ -7,42 +7,37 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.almadistefano.finantrack.data.Repository
 import com.almadistefano.finantrack.model.Transaccion
+import com.almadistefano.finantrack.model.TransaccionConCuentaYCategoria
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class TransaccionesViewModel(private val repository: Repository, userId : Int) : ViewModel() {
+class TransaccionesViewModel(
+    private val repository: Repository,
+    private val cuentaId: Int
+) : ViewModel() {
 
-    private val _transacciones = MutableStateFlow<List<Transaccion>>(emptyList())
-    val transacciones: StateFlow<List<Transaccion>> = _transacciones
-    val userId : Int = userId
+    private val _transacciones = MutableStateFlow<List<TransaccionConCuentaYCategoria>>(emptyList())
+    val transacciones: StateFlow<List<TransaccionConCuentaYCategoria>> = _transacciones
 
     init {
-        sincronizarTransacciones()
+        fetchTransacciones()
     }
 
     private fun fetchTransacciones() {
         viewModelScope.launch {
             try {
-                repository.getTransacciones(userId).collect { transaccionesList ->
-                    _transacciones.value = transaccionesList
-                }
+                val transaccionesConCategoria = repository.getTransaccionesDeLaCuenta(cuentaId)
+                _transacciones.value = transaccionesConCategoria
             } catch (e: Exception) {
-                Log.e("TransaccionesViewModel", "Error al obtener transacciones locales: ${e.message}")
+                Log.e("TransaccionesViewModel", "Error al obtener transacciones con categoría: ${e.message}")
             }
         }
+    }
+    fun recargar() {
+        fetchTransacciones()
     }
 
-    fun sincronizarTransacciones() {
-        viewModelScope.launch {
-            try {
-                repository.syncTransacciones()
-            } catch (e: Exception) {
-                Log.e("TransaccionesViewModel", "Error al sincronizar transacciones: ${e.message}")
-            }
-            fetchTransacciones()
-        }
-    }
 }
 
 @Suppress("UNCHECKED_CAST")

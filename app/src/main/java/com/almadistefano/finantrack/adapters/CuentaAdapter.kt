@@ -8,9 +8,14 @@ import com.almadistefano.finantrack.databinding.ItemCuentaBinding
 import com.almadistefano.finantrack.model.Cuenta
 
 
-class CuentaAdapter(private var cuentas: List<Cuenta>) :
-    RecyclerView.Adapter<CuentaAdapter.CuentaViewHolder>() {
+class CuentaAdapter(
+    private var cuentas: List<Cuenta>,
+    private val listener: OnCuentaSelectedListener
+) : RecyclerView.Adapter<CuentaAdapter.CuentaViewHolder>() {
 
+    interface OnCuentaSelectedListener {
+        fun onCuentaSelected(cuenta: Cuenta)
+    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CuentaViewHolder {
         val binding = ItemCuentaBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return CuentaViewHolder(binding)
@@ -28,7 +33,12 @@ class CuentaAdapter(private var cuentas: List<Cuenta>) :
         fun bind(cuenta: Cuenta) {
             binding.nombreCuenta.text = cuenta.nombre
             binding.saldoCuenta.text = cuenta.saldo.toString()
+
+            binding.root.setOnClickListener {
+                listener.onCuentaSelected(cuenta)
+            }
         }
+
     }
 
     fun updateData(newCuentas: List<Cuenta>) {

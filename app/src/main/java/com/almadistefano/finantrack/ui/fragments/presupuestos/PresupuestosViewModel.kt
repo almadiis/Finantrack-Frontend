@@ -1,26 +1,44 @@
 package com.almadistefano.finantrack.ui.fragments.presupuestos
 
 import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.almadistefano.finantrack.data.Repository
-import com.almadistefano.finantrack.model.PresupuestoConCategoria
+import com.almadistefano.finantrack.model.PresupuestoConUsuarioYCategoria
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class PresupuestosViewModel(private val repository: Repository) : ViewModel() {
+class PresupuestosViewModel(
+    private val repository: Repository,
+    private val userId: Int
+) : ViewModel() {
 
-    val presupuestosConCategoria: LiveData<List<PresupuestoConCategoria>> = repository.presupuestosConCategoria
+    private val _presupuestos = MutableStateFlow<List<PresupuestoConUsuarioYCategoria>>(emptyList())
+    val presupuestos: StateFlow<List<PresupuestoConUsuarioYCategoria>> = _presupuestos
 
     init {
-        sincronizarPresupuestos()
+        fetchPresupuestos()
+    }
+
+    private fun fetchPresupuestos() {
+        viewModelScope.launch {
+            try {
+                repository.presupuestosConUsuarioYCategoria.collect { lista ->
+                    _presupuestos.value = lista.filter { it.presupuesto.usuarioId == userId }
+                }
+            } catch (e: Exception) {
+                Log.e("PresupuestosViewModel", "Error al obtener presupuestos: ${e.message}")
+            }
+        }
     }
 
     fun sincronizarPresupuestos() {
         viewModelScope.launch {
             try {
-                repository.syncPresupuestos()
+                repository.syncPresupuestos(userId)
+                fetchPresupuestos()
             } catch (e: Exception) {
                 Log.e("PresupuestosViewModel", "Error al sincronizar presupuestos: ${e.message}")
             }
@@ -29,13 +47,13 @@ class PresupuestosViewModel(private val repository: Repository) : ViewModel() {
 }
 
 
-@Suppress("UNCHECKED_CAST")
 class PresupuestosViewModelFactory(
-    private val repository: Repository
+    private val repository: Repository,
+    private val userId: Int
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(PresupuestosViewModel::class.java)) {
-            return PresupuestosViewModel(repository) as T
+            return PresupuestosViewModel(repository, userId) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

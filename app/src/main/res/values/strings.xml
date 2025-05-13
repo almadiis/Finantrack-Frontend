@@ -5,4 +5,10 @@
     <string name="title_presupuestos">Presupuestos</string>
     <string name="title_perfil">Perfil</string>
     <string name="dia">Día</string>
+    <string-array name="periodos_presupuesto">
+        <item>Mensual</item>
+        <item>Semanal</item>
+        <item>Anual</item>
+    </string-array>
+
 </resources>

@@ -1,3 +1,4 @@
+import android.content.Context
 import android.util.Log
 import com.almadistefano.finantrack.data.FinantrackAPI
 import com.almadistefano.finantrack.model.Categoria
@@ -5,6 +6,7 @@ import com.almadistefano.finantrack.model.Cuenta
 import com.almadistefano.finantrack.model.LoginRequest
 import com.almadistefano.finantrack.model.Presupuesto
 import com.almadistefano.finantrack.model.Transaccion
+import com.almadistefano.finantrack.model.TransaccionConCuentaYCategoria
 import com.almadistefano.finantrack.model.Usuario
 
 
@@ -20,6 +22,7 @@ class RemoteDataSource {
 
     suspend fun getPresupuestos() = safeApiCall { api.getAllPresupuestos() }
     suspend fun postPresupuesto(presupuesto: Presupuesto) = safeApiCall { api.postPresupuesto(presupuesto) }
+    suspend fun eliminarPresupuesto(presupuestoId: Int) = safeApiCall { api.deletePresupuesto(presupuestoId) }
 
     suspend fun getTransacciones() = safeApiCall { api.getAllTransacciones() }
     suspend fun postTransaccion(transaccion: Transaccion) = safeApiCall { api.postTransaccion(transaccion) }
@@ -28,6 +31,29 @@ class RemoteDataSource {
     suspend fun getUsuarioByNombre(nombre: String) = safeApiCall { api.getAllUsuarios().find { it.nombre == nombre } }
     suspend fun loginUsuario(login : LoginRequest) = safeApiCall { api.loginUsuario(login) }
     suspend fun postUsuario(usuario: Usuario) = safeApiCall { api.postUsuario(usuario) }
+
+
+    suspend fun actualizarUsuario(
+        context: Context,
+        nombre: String,
+        correo: String,
+    ): Boolean {
+        val prefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        val userId = prefs.getInt("usuario_id", -1)
+        if (userId == -1) return false
+
+        val usuarioResponse = api.getUsuario(userId)
+        val usuarioActual = usuarioResponse.body() ?: return false
+
+        val usuarioActualizado = usuarioActual.copy(
+            nombre = nombre,
+            correo = correo,
+        )
+
+        val response = api.actualizarUsuario(userId, usuarioActualizado)
+        return response.isSuccessful
+    }
+
 
     private inline fun <T> safeApiCall(call: () -> T): T? {
         return try {

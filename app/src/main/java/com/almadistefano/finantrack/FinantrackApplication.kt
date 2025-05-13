@@ -15,10 +15,10 @@ class FinantrackApplication : Application(){
     override fun onCreate() {
         super.onCreate()
         appDB = Room.databaseBuilder(
-            this,
-            AppDatabase::class.java,
-            "finantrack.db"
-        ).build()
+                this,
+                AppDatabase::class.java,
+                "finantrack.db"
+            ).fallbackToDestructiveMigration(true).build()
     }
 
 }

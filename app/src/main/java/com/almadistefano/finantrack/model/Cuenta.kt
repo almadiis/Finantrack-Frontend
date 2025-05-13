@@ -11,12 +11,10 @@ import java.io.Serializable
 @Entity(tableName = "cuentas")
 @Parcelize
 data class Cuenta(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey(autoGenerate = false) val id: Int,
     val nombre: String,
     val saldo: Double,
     val tipo: String,
     @ColumnInfo(name = "usuario_id")
     val usuarioId: Int
-
-
 ) : Serializable, Parcelable
