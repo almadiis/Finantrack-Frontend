@@ -12,7 +12,15 @@ import kotlinx.coroutines.flow.Flow
 interface CategoriaDao {
     @Query("SELECT * FROM categorias")
     fun getAll(): Flow<List<Categoria>>
+    @Query("SELECT * FROM categorias WHERE usuarioId = :usuarioId OR usuarioId IS NULL")
+    fun getCategoriasFiltradas(usuarioId: Int): Flow<List<Categoria>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(categorias: List<Categoria>)
+
+    @Query("DELETE FROM categorias WHERE id = :categoriaId")
+    suspend fun eliminarCategorias(categoriaId: Int)
+
+    @Query("DELETE FROM categorias")
+    suspend fun deleteAll()
 }

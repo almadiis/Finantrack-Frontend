@@ -22,6 +22,11 @@
         android:name="com.almadistefano.finantrack.ui.fragments.presupuestos.PresupuestosFragment"
         android:label="@string/title_transactions"
         tools:layout="@layout/fragment_presupuestos" />
+    <fragment
+        android:id="@+id/navigation_categoria"
+        android:name="com.almadistefano.finantrack.ui.fragments.categorias.CategoriaFragment"
+        android:label="@string/title_categoria"
+        tools:layout="@layout/fragment_add_categoria" />
 
     <fragment
         android:id="@+id/navigation_notifications"

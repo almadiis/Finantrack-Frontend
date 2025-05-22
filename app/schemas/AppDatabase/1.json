@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "8cbad48a32dc209825f824a23652cd6f",
+    "identityHash": "18661d37a4cc8d1f6d89e56d400ea6f6",
     "entities": [
       {
         "tableName": "cuentas",
@@ -48,7 +48,7 @@
       },
       {
         "tableName": "categorias",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `nombre` TEXT NOT NULL, `tipo` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `nombre` TEXT NOT NULL, `tipo` TEXT NOT NULL, `icono` TEXT, `colorHex` TEXT, `usuarioId` INTEGER, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -67,6 +67,21 @@
             "columnName": "tipo",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "icono",
+            "columnName": "icono",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "colorHex",
+            "columnName": "colorHex",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "usuarioId",
+            "columnName": "usuarioId",
+            "affinity": "INTEGER"
           }
         ],
         "primaryKey": {
@@ -223,7 +238,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8cbad48a32dc209825f824a23652cd6f')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '18661d37a4cc8d1f6d89e56d400ea6f6')"
     ]
   }
 }

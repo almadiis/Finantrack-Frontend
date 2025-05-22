@@ -56,6 +56,8 @@ dependencies {
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.recyclerview)
+    implementation(libs.filament.android)
+    implementation(libs.google.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -78,12 +80,13 @@ dependencies {
 
     //Libreria graficos
     implementation (libs.mpandroidchart)
-    implementation("androidx.recyclerview:recyclerview:1.4.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+    implementation(libs.androidx.recyclerview)
+    implementation(libs.logging.interceptor)
+
 
 
 }
 ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
     arg("room.incremental", "true")
-}
+}3

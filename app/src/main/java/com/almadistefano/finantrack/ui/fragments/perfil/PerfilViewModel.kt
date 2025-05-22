@@ -1,5 +1,6 @@
 package com.almadistefano.finantrack.ui.fragments.perfil
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -10,7 +11,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class PerfilViewModel(private val repository: Repository, private val userId: Int) : ViewModel() {
+class PerfilViewModel(
+    private val repository: Repository,
+    private val userId: Int
+) : ViewModel() {
 
     private val _usuario = MutableStateFlow<Usuario?>(null)
     val usuario: StateFlow<Usuario?> = _usuario
@@ -28,16 +32,17 @@ class PerfilViewModel(private val repository: Repository, private val userId: In
 
     private fun fetchUsuario() {
         viewModelScope.launch {
-            repository.getUsuarioActual().collect { usuarioActual ->
-                _usuario.value = usuarioActual
+            repository.getUsuarioActual(userId).collect {
+                _usuario.value = it
             }
         }
     }
 
+
     private fun fetchCuentas() {
         viewModelScope.launch {
-            repository.getCuentas(userId).collect { listaCuentas ->
-                _cuentas.value = listaCuentas
+            repository.getCuentas(userId).collect {
+                _cuentas.value = it
             }
         }
     }
@@ -46,9 +51,18 @@ class PerfilViewModel(private val repository: Repository, private val userId: In
         _cuentaSeleccionada.value = cuenta
     }
 
-    // Método para obtener el ID de la cuenta seleccionada
-    fun getCuentaId(): Int {
-        return _cuentaSeleccionada.value?.id ?: -1
+    suspend fun actualizarUsuario(context: Context, nombre: String, correo: String, nuevaPassword: String?): Boolean {
+        return repository.actualizarUsuario(context, nombre, correo, nuevaPassword)
+    }
+
+    suspend fun verificarPassword(userId: Int, password: String): Boolean {
+        return repository.verificarPassword(userId, password)
+    }
+
+    fun limpiarDatos() {
+        _usuario.value = null
+        _cuentas.value = emptyList()
+        _cuentaSeleccionada.value = null
     }
 }
 

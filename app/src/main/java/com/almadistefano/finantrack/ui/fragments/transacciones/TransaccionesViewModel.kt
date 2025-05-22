@@ -19,6 +19,20 @@ class TransaccionesViewModel(
 
     private val _transacciones = MutableStateFlow<List<TransaccionConCuentaYCategoria>>(emptyList())
     val transacciones: StateFlow<List<TransaccionConCuentaYCategoria>> = _transacciones
+    private val _filtroCategoria = MutableStateFlow<String?>(null)
+    private val _filtroTipo = MutableStateFlow<String?>(null)
+    private val _filtroFecha = MutableStateFlow<String?>(null) // o usar rango si lo prefieres
+
+    fun aplicarFiltros(
+        categoria: String? = null,
+        tipo: String? = null,
+        fecha: String? = null
+    ) {
+        _filtroCategoria.value = categoria
+        _filtroTipo.value = tipo
+        _filtroFecha.value = fecha
+        fetchTransacciones()
+    }
 
     init {
         fetchTransacciones()
@@ -27,15 +41,40 @@ class TransaccionesViewModel(
     private fun fetchTransacciones() {
         viewModelScope.launch {
             try {
-                val transaccionesConCategoria = repository.getTransaccionesDeLaCuenta(cuentaId)
-                _transacciones.value = transaccionesConCategoria
+                val todas = repository.getTransaccionesDeLaCuenta(cuentaId)
+
+                val filtradas = todas.filter { trans ->
+                    val coincideCategoria = _filtroCategoria.value.isNullOrBlank() ||
+                            trans.categoria?.nombre?.contains(_filtroCategoria.value!!, ignoreCase = true) == true
+
+                    val coincideTipo = _filtroTipo.value.isNullOrBlank() ||
+                            trans.categoria?.tipo.equals(_filtroTipo.value, ignoreCase = true)
+
+                    val coincideFecha = _filtroFecha.value.isNullOrBlank() ||
+                            trans.transaccion.fecha.contains(_filtroFecha.value!!) // depende del formato
+
+                    coincideCategoria && coincideTipo && coincideFecha
+                }
+
+                _transacciones.value = filtradas
             } catch (e: Exception) {
-                Log.e("TransaccionesViewModel", "Error al obtener transacciones con categoría: ${e.message}")
+                Log.e("TransaccionesViewModel", "Error al obtener transacciones con filtros: ${e.message}")
             }
         }
     }
+
     fun recargar() {
         fetchTransacciones()
+    }
+    fun actualizarCuenta(nuevoId: Int) {
+        viewModelScope.launch {
+            try {
+                val nuevas = repository.getTransaccionesDeLaCuenta(nuevoId)
+                _transacciones.value = nuevas
+            } catch (e: Exception) {
+                Log.e("TransaccionesViewModel", "Error al cambiar cuenta: ${e.message}")
+            }
+        }
     }
 
 }

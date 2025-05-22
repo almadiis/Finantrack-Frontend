@@ -1,7 +1,7 @@
 package com.almadistefano.finantrack.ui
 
 import RemoteDataSource
-import android.content.Context
+import kotlinx.coroutines.flow.first
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -57,17 +57,28 @@ class LoginActivity : AppCompatActivity() {
                     val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
                     prefs.edit { putInt("usuario_id", user.id) }
 
-                    // 🔁 Sincronizar después del login
                     SyncManager(repository).syncAll(user.id)
 
-                    startActivity(Intent(this@LoginActivity, MainActivity::class.java))
-                    finish()
+                    val cuentas = repository.getCuentas(user.id).first() // ✅ solo una vez
+                    val primeraCuenta = cuentas.firstOrNull()
+                    if (primeraCuenta != null) {
+                        prefs.edit {
+                            putInt("cuenta_id", primeraCuenta.id)
+                        }
+                    }
+
+                    // ✅ Evita duplicaciones
+                    val intent = Intent(this@LoginActivity, MainActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    }
+                    startActivity(intent)
                 } else {
                     Toast.makeText(this@LoginActivity, "Credenciales inválidas", Toast.LENGTH_SHORT).show()
                 }
             }
-
         }
+
+
 
         btnRegister.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))

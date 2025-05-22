@@ -11,5 +11,8 @@ import java.io.Serializable
 data class Categoria(
     @PrimaryKey val id: Int,
     val nombre: String,
-    val tipo: String
+    val tipo: String,
+    val icono: String?,
+    val colorHex: String?,
+    val usuarioId: Int?
 ) : Serializable, Parcelable

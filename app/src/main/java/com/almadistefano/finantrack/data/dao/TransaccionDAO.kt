@@ -34,4 +34,7 @@ interface TransaccionDao {
     // Eliminar todas las transacciones (opcional, por ejemplo al cerrar sesión)
     @Query("DELETE FROM transacciones")
     suspend fun borrarTodasLasTransacciones()
+
+    @Query("DELETE FROM transacciones")
+    suspend fun deleteAll()
 }

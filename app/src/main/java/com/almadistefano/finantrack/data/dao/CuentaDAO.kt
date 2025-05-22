@@ -17,4 +17,8 @@ interface CuentaDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCuenta(cuenta: List<Cuenta>)
 
+    @Query("SELECT * FROM cuentas WHERE usuario_id = :usuarioId LIMIT 1")
+    suspend fun getPrimeraCuentaPorUsuario(usuarioId: Int): Cuenta?
+    @Query("DELETE FROM cuentas")
+    suspend fun deleteAll()
 }

@@ -27,10 +27,16 @@ class LocalDataSource(
     // --- Cuentas ---
     suspend fun insertCuentas(cuentas: List<Cuenta>) = cuentaDao.insertCuenta(cuentas)
     fun getCuentasByUsuario(usuarioId: Int): Flow<List<Cuenta>> = cuentaDao.getAllCuentas(usuarioId)
+    suspend fun getPrimeraCuentaPorUsuario(usuarioId: Int): Cuenta? {
+        return cuentaDao.getPrimeraCuentaPorUsuario(usuarioId)
+    }
 
     // --- Categorías ---
     suspend fun insertCategorias(categorias: List<Categoria>) = categoriaDao.insertAll(categorias)
     fun getAllCategorias(): Flow<List<Categoria>> = categoriaDao.getAll()
+    suspend fun eliminarCategorias(categoriaId: Int) = categoriaDao.eliminarCategorias(categoriaId)
+    fun getCategoriasFiltradas(usuarioId: Int): Flow<List<Categoria>> =
+        categoriaDao.getCategoriasFiltradas(usuarioId)
 
     // --- Presupuestos ---
     suspend fun insertPresupuestos(presupuestos: List<Presupuesto>) = presupuestoDao.insertAll(presupuestos)
@@ -46,7 +52,7 @@ class LocalDataSource(
         transaccionDao.obtenerTransaccionesDeLaCuenta(cuentaId)
     // --- Usuario ---
     suspend fun saveUsuario(usuario: Usuario) = usuarioDao.insertUsuario(usuario)
-    fun getUsuarioActual(): Flow<Usuario?> = usuarioDao.getUsuarioActual()
+    fun getUsuarioActual(usuarioId: Int): Flow<Usuario?> = usuarioDao.getUsuarioById(usuarioId)
     suspend fun borrarUsuarios() = usuarioDao.borrarUsuarios()
     suspend fun loginUsuario(username: String, password: String): Usuario? =
         usuarioDao.obtenerUsuarioPorCredenciales(username, password)
@@ -56,5 +62,14 @@ class LocalDataSource(
 
     suspend fun getUsuarioConCuentas(usuarioId: Int): UsuarioConCuentas =
         usuarioDao.obtenerCuentasDelUsuario(usuarioId)
+
+    suspend fun clearAllData() {
+        usuarioDao.deleteAll()
+        cuentaDao.deleteAll()
+        presupuestoDao.deleteAll()
+        transaccionDao.deleteAll()
+        categoriaDao.deleteAll()
+    }
+
 }
 

@@ -28,5 +28,6 @@ interface PresupuestoDao {
 
     @Query("DELETE FROM presupuestos WHERE id = :presupuestoId")
     suspend fun eliminarPresupuestos(presupuestoId: Int)
-
+    @Query("DELETE FROM presupuestos")
+    suspend fun deleteAll()
 }

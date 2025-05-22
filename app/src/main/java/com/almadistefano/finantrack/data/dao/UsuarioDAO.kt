@@ -16,8 +16,9 @@ interface UsuarioDao {
     @Query("SELECT * FROM usuarios LIMIT 1")
     fun getUsuarioActual(): Flow<Usuario?>
 
-    @Query("SELECT * FROM usuarios WHERE id = :usuarioId")
-    suspend fun getUsuarioById(usuarioId: Int): Usuario?
+    @Query("SELECT * FROM usuarios WHERE id = :usuarioId LIMIT 1")
+    fun getUsuarioById(usuarioId: Int): Flow<Usuario?>
+
 
     @Query("SELECT * FROM usuarios WHERE nombre = :username")
     suspend fun getUsuarioByUserName(username: String): Usuario?
@@ -36,4 +37,7 @@ interface UsuarioDao {
 
     @Query("DELETE FROM usuarios")
     suspend fun borrarUsuarios() // útil al cerrar sesión
+
+    @Query("DELETE FROM usuarios")
+    suspend fun deleteAll()
 }

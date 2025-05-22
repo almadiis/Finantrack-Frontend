@@ -15,6 +15,10 @@
         android:id="@+id/navigation_presupuestos"
         android:icon="@drawable/ic_presupuestos"
         android:title="@string/title_presupuestos" />
+    <item
+        android:id="@+id/navigation_categoria"
+        android:icon="@drawable/ic_categoria"
+        android:title="@string/title_categoria" />
 
     <item
         android:id="@+id/navigation_notifications"

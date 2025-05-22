@@ -18,6 +18,7 @@ class Repository(
     private val local: LocalDataSource,
     private val remote: RemoteDataSource
 ) {
+
     val presupuestosConUsuarioYCategoria: Flow<List<PresupuestoConUsuarioYCategoria>>
         get() = local.getPresupuestosConUsuarioYCategoria()
 
@@ -27,10 +28,21 @@ class Repository(
     suspend fun syncCuentas() {
         remote.getCuentas()?.let { local.insertCuentas(it) }
     }
+    suspend fun getPrimeraCuenta(usuarioId: Int): Cuenta? {
+        return local.getPrimeraCuentaPorUsuario(usuarioId)
+    }
+
     suspend fun addCuenta(cuenta: Cuenta) {
         remote.postCuenta(cuenta)
         local.insertCuentas(listOf(cuenta))
     }
+
+
+    // Verifica la contraseña actual del usuario
+    suspend fun verificarPassword(userId: Int, password: String): Boolean {
+        return remote.verificarPassword(userId, password)
+    }
+
 
     // --- Categorías ---
     fun getCategorias(): Flow<List<Categoria>> = local.getAllCategorias()
@@ -38,9 +50,16 @@ class Repository(
         remote.getCategorias()?.let { local.insertCategorias(it) }
     }
     suspend fun addCategoria(categoria: Categoria) {
-        remote.postCategoria(categoria)
-        local.insertCategorias(listOf(categoria))
+        val creada = remote.postCategoria(categoria)
+        local.insertCategorias(listOf(creada))
     }
+    suspend fun eliminarCategoria(categoria: Categoria) {
+        local.eliminarCategorias(categoria.id)
+        remote.eliminarCategoria(categoria.id)
+    }
+    fun getCategoriasFiltradas(usuarioId: Int): Flow<List<Categoria>> =
+        local.getCategoriasFiltradas(usuarioId)
+
 
     // --- Presupuestos ---
     fun getPresupuestos(usuarioId: Int): Flow<List<Presupuesto>> = local.getPresupuestosByUsuario(usuarioId)
@@ -86,7 +105,10 @@ class Repository(
     }
 
     // --- Usuarios ---
-    fun getUsuarioActual(): Flow<Usuario?> = local.getUsuarioActual()
+    fun getUsuarioActual(userId: Int): Flow<Usuario?> {
+        return local.getUsuarioActual(userId)
+    }
+
     suspend fun loginUsuario(username: String, password: String): Usuario? {
         // Hacemos la llamada al backend (API remota) para autenticar al usuario
         val remoteUser = remote.loginUsuario(LoginRequest(username, password))
@@ -115,8 +137,12 @@ class Repository(
         context: Context,
         nombre: String,
         correo: String,
+        nuevaPassword: String?
     ): Boolean {
-        return remote.actualizarUsuario(context, nombre, correo)
+        return remote.actualizarUsuario(context, nombre, correo, nuevaPassword)
+    }
+    suspend fun limpiarBaseLocal() {
+        local.clearAllData()
     }
 
 

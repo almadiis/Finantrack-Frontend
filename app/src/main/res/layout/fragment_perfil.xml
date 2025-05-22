@@ -12,7 +12,6 @@
         android:padding="24dp"
         android:gravity="center_horizontal">
 
-        <!-- TÍTULO -->
         <TextView
             android:id="@+id/tvTituloPerfil"
             android:layout_width="wrap_content"
@@ -23,21 +22,12 @@
             android:textColor="#6200EE"
             android:layout_marginBottom="24dp" />
 
-        <!-- SPINNER DE CUENTAS -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Cuenta bancaria"
-            android:textStyle="bold"
-            android:layout_marginBottom="4dp" />
-
         <Spinner
             android:id="@+id/spinnerCuentas"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp" />
 
-        <!-- BOTÓN SELECCIONAR CUENTA -->
         <Button
             android:id="@+id/btnSeleccionarCuenta"
             android:layout_width="match_parent"
@@ -47,7 +37,6 @@
             android:backgroundTint="#6200EE"
             android:layout_marginBottom="12dp" />
 
-        <!-- BOTÓN CREAR CUENTA -->
         <Button
             android:id="@+id/btnCrearCuenta"
             android:layout_width="match_parent"
@@ -55,30 +44,40 @@
             android:text="Crear nueva cuenta"
             android:textColor="#6200EE"
             android:backgroundTint="@android:color/transparent"
-            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_marginBottom="24dp" />
 
-        <!-- NOMBRE -->
         <EditText
             android:id="@+id/etNombre"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Nombre"
             android:inputType="textPersonName"
-            android:backgroundTint="#6200EE"
             android:layout_marginBottom="12dp" />
 
-        <!-- CORREO -->
         <EditText
             android:id="@+id/etCorreo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Correo"
             android:inputType="textEmailAddress"
-            android:backgroundTint="#6200EE"
+            android:layout_marginBottom="12dp" />
+
+        <EditText
+            android:id="@+id/etPasswordActual"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Contraseña actual"
+            android:inputType="textPassword"
+            android:layout_marginBottom="12dp" />
+
+        <EditText
+            android:id="@+id/etNuevaPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nueva contraseña"
+            android:inputType="textPassword"
             android:layout_marginBottom="24dp" />
 
-        <!-- GUARDAR CAMBIOS -->
         <Button
             android:id="@+id/btnGuardarCambios"
             android:layout_width="match_parent"
@@ -88,7 +87,6 @@
             android:backgroundTint="#03DAC5"
             android:layout_marginBottom="16dp" />
 
-        <!-- CERRAR SESIÓN -->
         <Button
             android:id="@+id/btnCerrarSesion"
             android:layout_width="match_parent"
@@ -96,5 +94,10 @@
             android:text="Cerrar sesión"
             android:textColor="#FFFFFF"
             android:backgroundTint="#FF5252" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            />
+
     </LinearLayout>
 </ScrollView>

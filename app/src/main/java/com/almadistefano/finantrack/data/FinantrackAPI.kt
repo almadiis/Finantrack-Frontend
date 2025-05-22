@@ -57,7 +57,7 @@ interface FinantrackAPIInterface {
     suspend fun getAllCategorias(): List<Categoria>
 
     @POST("api/categorias")
-    suspend fun postCategoria(@Body categoria: Categoria): Categoria
+    suspend fun postCategoria(@Body categoria: Categoria): Response<Categoria>
 
     @PUT("api/categorias/{id}")
     suspend fun updateCategoria(@Path("id") id: Int, @Body categoria: Categoria): Categoria

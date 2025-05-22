@@ -61,10 +61,11 @@ class AddTransaccionBottomSheet : BottomSheetDialogFragment() {
         val fechaBtn = view.findViewById<Button>(R.id.btnFecha)
         val guardarBtn = view.findViewById<Button>(R.id.btnGuardar)
         val spinnerCategoria = view.findViewById<Spinner>(R.id.spinnerCategoria)
+        val userId = requireContext().getSharedPreferences("user_prefs", Context.MODE_PRIVATE).getInt("usuario_id", -1)
 
         // Obtener categorías y llenar spinner
         lifecycleScope.launch {
-            repository.getCategorias().collect { categorias ->
+            repository.getCategoriasFiltradas(userId).collect { categorias ->
                 listaCategorias = categorias
                 val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, categorias.map { it.nombre })
                 spinnerCategoria.adapter = adapter

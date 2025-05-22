@@ -15,6 +15,7 @@ import com.almadistefano.finantrack.R
 import com.almadistefano.finantrack.data.LocalDataSource
 import com.almadistefano.finantrack.data.Repository
 import com.almadistefano.finantrack.databinding.ActivityMainBinding
+import com.almadistefano.finantrack.ui.fragments.categorias.CategoriaFragment
 import com.almadistefano.finantrack.ui.fragments.perfil.PerfilFragment
 import com.almadistefano.finantrack.ui.fragments.presupuestos.PresupuestosFragment
 import com.almadistefano.finantrack.ui.fragments.transacciones.TransaccionesFragment
@@ -28,6 +29,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var perfilFragment: PerfilFragment
     private lateinit var presupuestosFragment: PresupuestosFragment
     private lateinit var transaccionesFragment: TransaccionesFragment
+    private lateinit var categoriaFragment: CategoriaFragment
     private lateinit var navController: NavController
 
 
@@ -71,6 +73,7 @@ class MainActivity : AppCompatActivity() {
         perfilFragment = PerfilFragment()
         presupuestosFragment = PresupuestosFragment()
         transaccionesFragment = TransaccionesFragment()
+        categoriaFragment = CategoriaFragment()
 
 
         val bottomNav = findViewById<BottomNavigationView>(R.id.navView)

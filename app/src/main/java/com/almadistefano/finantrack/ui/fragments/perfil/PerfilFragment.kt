@@ -2,6 +2,7 @@ package com.almadistefano.finantrack.ui.fragments.perfil
 
 import RemoteDataSource
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +10,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.almadistefano.finantrack.FinantrackApplication
-import com.almadistefano.finantrack.data.LocalDataSource
 import com.almadistefano.finantrack.data.Repository
 import com.almadistefano.finantrack.databinding.FragmentPerfilBinding
 import androidx.core.content.edit
@@ -18,7 +18,10 @@ import kotlinx.coroutines.launch
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
-
+import com.almadistefano.finantrack.data.LocalDataSource
+import com.almadistefano.finantrack.ui.LoginActivity
+import com.almadistefano.finantrack.ui.fragments.presupuestos.PresupuestosViewModel
+import com.almadistefano.finantrack.ui.fragments.presupuestos.PresupuestosViewModelFactory
 
 class PerfilFragment : Fragment() {
 
@@ -32,10 +35,6 @@ class PerfilFragment : Fragment() {
 
         val app = requireActivity().application as FinantrackApplication
 
-        val userId = requireContext()
-            .getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-            .getInt("usuario_id", -1)
-
         repository = Repository(
             LocalDataSource(
                 app.appDB.cuentaDao(),
@@ -46,97 +45,119 @@ class PerfilFragment : Fragment() {
             ),
             RemoteDataSource()
         )
-
-        val factory = PerfilViewModelFactory(repository, userId)
-        vm = ViewModelProvider(this, factory)[PerfilViewModel::class.java]
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentPerfilBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        val prefs = requireContext().getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        val userId = getUserId()
 
-        // Configuramos el Spinner para las cuentas
+        // Inicializamos el ViewModel con el usuario actualizado
+        vm = ViewModelProvider(this, PerfilViewModelFactory(repository, userId))[PerfilViewModel::class.java]
+
+        parentFragmentManager.setFragmentResultListener("usuario_actualizado", viewLifecycleOwner) { _, _ ->
+            vm.limpiarDatos()
+            vm = ViewModelProvider(this, PerfilViewModelFactory(repository, getUserId()))[PerfilViewModel::class.java]
+            observeUsuario()
+            observeCuentas()
+        }
+
+        observeUsuario()
         observeCuentas()
 
         binding.btnSeleccionarCuenta.setOnClickListener {
-            val cuentaSeleccionada = vm.cuentaSeleccionada.value
-            if (cuentaSeleccionada != null) {
-                // Guardamos el ID de la cuenta seleccionada en SharedPreferences
-                val sharedPreferences = requireContext().getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-                sharedPreferences.edit {
-                    putInt("cuenta_id", cuentaSeleccionada.id)
+            vm.cuentaSeleccionada.value?.let {
+                prefs.edit {
+                    putInt("cuenta_id", it.id)
                 }
-                // Mostrar mensaje de confirmación
-                Toast.makeText(requireContext(), "Cuenta seleccionada: ${cuentaSeleccionada.nombre}", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(requireContext(), "Por favor, selecciona una cuenta.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Cuenta seleccionada: ${it.nombre}", Toast.LENGTH_SHORT).show()
+                parentFragmentManager.setFragmentResult("cuenta_actualizada", Bundle())
             }
         }
-        // Rellenar campos actuales
-        lifecycleScope.launch {
-            vm.usuario.collect { usuario ->
-                usuario?.let {
-                    binding.etNombre.setText(it.nombre)
-                    binding.etCorreo.setText(it.correo)
-                }
-            }
+
+        binding.btnCrearCuenta.setOnClickListener {
+            CrearCuentaBottomSheet().show(parentFragmentManager, "CrearCuenta")
         }
 
         binding.btnGuardarCambios.setOnClickListener {
             val nombre = binding.etNombre.text.toString()
             val correo = binding.etCorreo.text.toString()
+            val actual = binding.etPasswordActual.text.toString()
+            val nueva = binding.etNuevaPassword.text.toString().takeIf { it.isNotBlank() }
 
+            if (nombre.isBlank() || correo.isBlank()) {
+                Toast.makeText(context, "Nombre y correo no pueden estar vacíos", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
             lifecycleScope.launch {
+                val esValida = if (nueva != null) vm.verificarPassword(userId, actual) else true
 
-                val actualizado = repository.actualizarUsuario(requireContext(), nombre, correo)
-                if (actualizado) {
-                    Toast.makeText(requireContext(), "Datos actualizados", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(requireContext(), "Error al actualizar", Toast.LENGTH_SHORT).show()
+                if (!esValida) {
+                    Toast.makeText(context, "Contraseña actual incorrecta", Toast.LENGTH_SHORT).show()
+                    return@launch
                 }
+
+                val actualizado = vm.actualizarUsuario(requireContext(), nombre, correo, nueva)
+                Toast.makeText(context, if (actualizado) "Actualizado" else "Error", Toast.LENGTH_SHORT).show()
             }
         }
 
+        binding.btnCerrarSesion.setOnClickListener {
+            lifecycleScope.launch {
+                repository.limpiarBaseLocal()
+                prefs.edit { clear() }
+                parentFragmentManager.setFragmentResult("usuario_actualizado", Bundle())
+                startActivity(Intent(requireContext(), LoginActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                })
+            }
+        }
 
     }
 
     private fun observeCuentas() {
-        // Usamos collect para obtener los datos del StateFlow
         lifecycleScope.launch {
             vm.cuentas.collect { cuentas ->
-                // Creamos un adaptador para el Spinner con la lista de cuentas
-                val nombresCuentas = cuentas.map { it.nombre } // Obtenemos los nombres de las cuentas
-                val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, nombresCuentas)
+                val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, cuentas.map { it.nombre })
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-
-                // Asignamos el adaptador al Spinner
                 binding.spinnerCuentas.adapter = adapter
 
-                // Configuramos el listener para la selección del Spinner
+                val cuentaIdActual = requireContext()
+                    .getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+                    .getInt("cuenta_id", -1)
+
+                val indexSeleccionada = cuentas.indexOfFirst { it.id == cuentaIdActual }
+                if (indexSeleccionada != -1) {
+                    binding.spinnerCuentas.setSelection(indexSeleccionada)
+                    vm.seleccionarCuenta(cuentas[indexSeleccionada])
+                }
+
                 binding.spinnerCuentas.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                    override fun onItemSelected(parentView: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                        val cuentaSeleccionada = cuentas[position]
-                        vm.seleccionarCuenta(cuentaSeleccionada)
+                    override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                        vm.seleccionarCuenta(cuentas[position])
                     }
 
-                    override fun onNothingSelected(parentView: AdapterView<*>?) {
-                        // No hacer nada cuando no se selecciona nada
-                    }
+                    override fun onNothingSelected(parent: AdapterView<*>) {}
                 }
+            }
+        }
+    }
+
+    private fun getUserId(): Int {
+        return requireContext().getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+            .getInt("usuario_id", -1)
+    }
+
+    private fun observeUsuario() {
+        lifecycleScope.launch {
+            vm.usuario.collect {
+                binding.etNombre.setText(it?.nombre ?: "")
+                binding.etCorreo.setText(it?.correo ?: "")
             }
         }
     }

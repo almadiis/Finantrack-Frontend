@@ -6,7 +6,6 @@ import com.almadistefano.finantrack.model.Cuenta
 import com.almadistefano.finantrack.model.LoginRequest
 import com.almadistefano.finantrack.model.Presupuesto
 import com.almadistefano.finantrack.model.Transaccion
-import com.almadistefano.finantrack.model.TransaccionConCuentaYCategoria
 import com.almadistefano.finantrack.model.Usuario
 
 
@@ -18,7 +17,16 @@ class RemoteDataSource {
     suspend fun postCuenta(cuenta: Cuenta) = safeApiCall { api.postCuenta(cuenta) }
 
     suspend fun getCategorias() = safeApiCall { api.getAllCategorias() }
-    suspend fun postCategoria(categoria: Categoria) = safeApiCall { api.postCategoria(categoria) }
+    suspend fun postCategoria(categoria: Categoria): Categoria {
+        val response = api.postCategoria(categoria)
+        if (response.isSuccessful) {
+            return response.body() ?: throw Exception("Respuesta vacía")
+        } else {
+            throw Exception("Error al guardar categoría: ${response.code()}")
+        }
+    }
+    suspend fun eliminarCategoria(categoriaId: Int) = safeApiCall { api.deleteCategoria(categoriaId) }
+
 
     suspend fun getPresupuestos() = safeApiCall { api.getAllPresupuestos() }
     suspend fun postPresupuesto(presupuesto: Presupuesto) = safeApiCall { api.postPresupuesto(presupuesto) }
@@ -37,6 +45,7 @@ class RemoteDataSource {
         context: Context,
         nombre: String,
         correo: String,
+        nuevaPassword: String?
     ): Boolean {
         val prefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         val userId = prefs.getInt("usuario_id", -1)
@@ -48,6 +57,7 @@ class RemoteDataSource {
         val usuarioActualizado = usuarioActual.copy(
             nombre = nombre,
             correo = correo,
+            password = nuevaPassword ?: usuarioActual.password
         )
 
         val response = api.actualizarUsuario(userId, usuarioActualizado)
@@ -55,6 +65,17 @@ class RemoteDataSource {
     }
 
 
+    suspend fun verificarPassword(userId: Int, password: String): Boolean {
+        val usuarioResponse = api.getUsuario(userId)
+        val usuarioActual = usuarioResponse.body() ?: return false
+
+        return if (usuarioActual.password == password) {
+            true
+        } else {
+            Log.e("RemoteDataSource", "Contraseña incorrecta")
+            false
+        }
+    }
     private inline fun <T> safeApiCall(call: () -> T): T? {
         return try {
             call()
