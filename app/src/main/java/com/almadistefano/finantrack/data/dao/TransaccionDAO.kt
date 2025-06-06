@@ -21,17 +21,14 @@ interface TransaccionDao {
     @Query("SELECT * FROM transacciones WHERE cuenta_id = :cuentaId")
     fun getTransaccionesByCuenta(cuentaId: Int): Flow<List<Transaccion>>
 
-    // Obtener las cuentas de un usuario
     @Transaction
     @Query("SELECT * FROM transacciones WHERE cuenta_id = :cuentaId")
     suspend fun obtenerTransaccionesDeLaCuenta(cuentaId: Int): List<TransaccionConCuentaYCategoria>
 
 
-    // Eliminar todas las transacciones de una cuenta
     @Query("DELETE FROM transacciones WHERE cuenta_id = :cuentaId")
     suspend fun borrarTransaccionesPorCuenta(cuentaId: Int)
 
-    // Eliminar todas las transacciones (opcional, por ejemplo al cerrar sesión)
     @Query("DELETE FROM transacciones")
     suspend fun borrarTodasLasTransacciones()
 

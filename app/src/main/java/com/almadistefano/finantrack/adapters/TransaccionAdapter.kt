@@ -1,5 +1,6 @@
 package com.almadistefano.finantrack.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.almadistefano.finantrack.R
 import com.almadistefano.finantrack.databinding.ItemTransaccionBinding
 import com.almadistefano.finantrack.model.TransaccionConCuentaYCategoria
+import com.bumptech.glide.Glide
 
 
 class TransaccionAdapter(
@@ -64,42 +66,38 @@ class TransaccionAdapter(
         private val binding = ItemTransaccionBinding.bind(itemView)
 
         fun bind(item: TransaccionConCuentaYCategoria) {
-            itemView.findViewById<TextView>(R.id.tvCategoria).text = item.categoria.nombre
-            itemView.findViewById<TextView>(R.id.tvDescripcion).text = item.transaccion.descripcion
-            itemView.findViewById<TextView>(R.id.tvMonto).text = "%.2f €".format(item.transaccion.monto)
+            binding.tvCategoria.text = item.categoria.nombre
+            binding.tvDescripcion.text = item.transaccion.descripcion
+            binding.tvMonto.text = "%.2f €".format(item.transaccion.monto)
 
-            val iconView = itemView.findViewById<ImageView>(R.id.ivIcono)
-            iconView.setImageResource(R.drawable.ic_categoria_default) // puedes mejorar esto más adelante
-            val categoriaNombre = item.categoria.nombre
-            val monto = item.transaccion.monto
-            val descripcion = item.transaccion.descripcion
-            val tipo = item.transaccion.tipo
-
-            binding.tvCategoria.text = categoriaNombre
-            binding.tvDescripcion.text = descripcion
-            binding.tvMonto.text = "%.2f €".format(monto)
-
-            // Color según tipo
-            val colorMonto = if (tipo == "gasto") {
+            val colorMonto = if (item.transaccion.tipo == "gasto") {
                 android.graphics.Color.RED
             } else {
-                android.graphics.Color.rgb(0, 150, 136) // verde azulado
+                android.graphics.Color.rgb(0, 150, 136)
             }
             binding.tvMonto.setTextColor(colorMonto)
 
-            // Asignar icono según categoría
-            val iconRes = when (categoriaNombre.lowercase()) {
-                "comida" -> R.drawable.dieta
-                "ocio" -> R.drawable.actividades_extracurriculares
-                "salud" -> R.drawable.salud_mental
-                "compras" -> R.drawable.carrito_de_compras
-                "gasolina" -> R.drawable.bomba_de_gas
-                "gym" -> R.drawable.capacitacion
-                "nómina" -> R.drawable.nomina_de_sueldos
-                else -> R.drawable.ic_categoria_default
+
+            val iconoStr = item.categoria.icono
+
+            if (!iconoStr.isNullOrBlank()) {
+                val context = binding.root.context
+                val resId = context.resources.getIdentifier(iconoStr, "drawable", context.packageName)
+                Log.d("DEBUG_ICONO", "Icono recibido: $iconoStr → recurso encontrado: $resId")
+
+                if (resId != 0) {
+                    binding.ivIcono.setImageResource(resId)
+                } else {
+                    Glide.with(context)
+                        .load(iconoStr)
+                        .placeholder(R.drawable.ic_categoria_default)
+                        .into(binding.ivIcono)
+                }
+            } else {
+                binding.ivIcono.setImageResource(R.drawable.ic_categoria_default)
             }
-            binding.ivIcono.setImageResource(iconRes)
 
         }
+
     }
 }

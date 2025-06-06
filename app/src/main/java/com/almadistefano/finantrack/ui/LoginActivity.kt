@@ -24,7 +24,16 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val userId = prefs.getInt("usuario_id", -1)
 
+        if (userId != -1) {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+            return
+        }
         val db = (application as FinantrackApplication).appDB
 
 
@@ -67,7 +76,6 @@ class LoginActivity : AppCompatActivity() {
                         }
                     }
 
-                    // ✅ Evita duplicaciones
                     val intent = Intent(this@LoginActivity, MainActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     }

@@ -50,6 +50,7 @@ class LocalDataSource(
     fun getTransaccionesByCuenta(cuentaId: Int): Flow<List<Transaccion>> = transaccionDao.getTransaccionesByCuenta(cuentaId)
     suspend fun getTransaccionesDeLaCuenta(cuentaId: Int): List<TransaccionConCuentaYCategoria> =
         transaccionDao.obtenerTransaccionesDeLaCuenta(cuentaId)
+
     // --- Usuario ---
     suspend fun saveUsuario(usuario: Usuario) = usuarioDao.insertUsuario(usuario)
     fun getUsuarioActual(usuarioId: Int): Flow<Usuario?> = usuarioDao.getUsuarioById(usuarioId)

@@ -92,24 +92,28 @@ class TransaccionesFragment : Fragment() {
 
                 binding.spinnerCategoria.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                     override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                        val selectedCategoria = parent.getItemAtPosition(position).toString()
+                        val item = parent.getItemAtPosition(position)
+                        val selectedCategoria = item?.toString()
+
                         vm.aplicarFiltros(
-                            categoria = if (selectedCategoria == "Todas") null else selectedCategoria,
-                            tipo = if (binding.spinnerTipo.selectedItem.toString() == "Todos") null else binding.spinnerTipo.selectedItem.toString(),
+                            categoria = if (selectedCategoria == null || selectedCategoria == "Todas") null else selectedCategoria,
+                            tipo = if (binding.spinnerTipo.selectedItem?.toString() == "Todos") null else binding.spinnerTipo.selectedItem?.toString(),
                             fecha = binding.etFechaFiltro.text.toString()
                         )
                     }
 
                     override fun onNothingSelected(parent: AdapterView<*>) {}
                 }
+
             }
         }
 
         binding.spinnerTipo.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                val tipo = parent.getItemAtPosition(position)?.toString()
                 vm.aplicarFiltros(
-                    categoria = if (binding.spinnerCategoria.selectedItem.toString() == "Todas") null else binding.spinnerCategoria.selectedItem.toString(),
-                    tipo = if (parent.getItemAtPosition(position).toString() == "Todos") null else parent.getItemAtPosition(position).toString(),
+                    categoria = if (binding.spinnerCategoria.selectedItem?.toString() == "Todas") null else binding.spinnerCategoria.selectedItem?.toString(),
+                    tipo = if (tipo == "Todos") null else tipo,
                     fecha = binding.etFechaFiltro.text.toString()
                 )
             }
@@ -117,19 +121,23 @@ class TransaccionesFragment : Fragment() {
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
 
+
         binding.etFechaFiltro.setOnClickListener {
             val calendar = Calendar.getInstance()
             val datePicker = DatePickerDialog(requireContext(), { _, year, month, dayOfMonth ->
-                val fecha = String.format("%02d/%02d/%d", dayOfMonth, month + 1, year)
+                val fecha = String.format("%04d-%02d-%02d", year, month + 1, dayOfMonth)
                 binding.etFechaFiltro.setText(fecha)
+                binding.btnLimpiarFecha.visibility = View.VISIBLE // mostrar la cruz
+
                 vm.aplicarFiltros(
-                    categoria = if (binding.spinnerCategoria.selectedItem.toString() == "Todas") null else binding.spinnerCategoria.selectedItem.toString(),
-                    tipo = if (binding.spinnerTipo.selectedItem.toString() == "Todos") null else binding.spinnerTipo.selectedItem.toString(),
+                    categoria = binding.spinnerCategoria.selectedItem?.toString()?.takeIf { it != "Todas" },
+                    tipo = binding.spinnerTipo.selectedItem?.toString()?.takeIf { it != "Todos" },
                     fecha = fecha
                 )
             }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
             datePicker.show()
         }
+
 
         binding.fabAgregarTransaccion.setOnClickListener {
             val dialog = AddTransaccionBottomSheet()
@@ -137,12 +145,16 @@ class TransaccionesFragment : Fragment() {
         }
         binding.btnLimpiarFecha.setOnClickListener {
             binding.etFechaFiltro.setText("")
+            binding.btnLimpiarFecha.visibility = View.GONE // ocultar la cruz
+
             vm.aplicarFiltros(
-                categoria = binding.spinnerCategoria.selectedItem?.toString().orEmpty(),
+                categoria = binding.spinnerCategoria.selectedItem?.toString()?.takeIf { it != "Todas" },
                 tipo = binding.spinnerTipo.selectedItem?.toString()?.takeIf { it != "Todos" },
-                fecha = null // limpia el filtro de fecha
+                fecha = null
             )
         }
+
+
 
 
         parentFragmentManager.setFragmentResultListener("transaccion_guardada", viewLifecycleOwner) { _, _ ->

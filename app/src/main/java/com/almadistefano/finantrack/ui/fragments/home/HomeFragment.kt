@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.almadistefano.finantrack.FinantrackApplication
+import com.almadistefano.finantrack.R
 import com.almadistefano.finantrack.adapters.CuentaAdapter
 import com.almadistefano.finantrack.data.LocalDataSource
 import com.almadistefano.finantrack.data.Repository
@@ -163,8 +164,12 @@ class HomeFragment : Fragment() {
                     val entriesGastos = calcularPorcentajes(gastos)
                     val entriesIngresos = calcularPorcentajes(ingresos)
 
-                    cargarGrafico(binding.chartGastos, entriesGastos, "Gastos", Color.RED)
-                    cargarGrafico(binding.chartIngresos, entriesIngresos, "Ingresos", Color.GREEN)
+                    val colorGastos = requireContext().getColor(R.color.purple_500)
+
+                    cargarGrafico(binding.chartGastos, entriesGastos, "Gastos", colorGastos)
+
+                    val colorIngresos = requireContext().getColor(R.color.red_850)
+                    cargarGrafico(binding.chartIngresos, entriesIngresos, "Ingresos", colorIngresos)
                 }
             }
         }

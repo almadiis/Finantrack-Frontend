@@ -21,7 +21,7 @@ class TransaccionesViewModel(
     val transacciones: StateFlow<List<TransaccionConCuentaYCategoria>> = _transacciones
     private val _filtroCategoria = MutableStateFlow<String?>(null)
     private val _filtroTipo = MutableStateFlow<String?>(null)
-    private val _filtroFecha = MutableStateFlow<String?>(null) // o usar rango si lo prefieres
+    private val _filtroFecha = MutableStateFlow<String?>(null)
 
     fun aplicarFiltros(
         categoria: String? = null,
@@ -42,16 +42,20 @@ class TransaccionesViewModel(
         viewModelScope.launch {
             try {
                 val todas = repository.getTransaccionesDeLaCuenta(cuentaId)
+                if (_filtroCategoria.value.isNullOrBlank() && _filtroTipo.value.isNullOrBlank() && _filtroFecha.value.isNullOrBlank()) {
+                    _transacciones.value = todas
+                    return@launch
+                }
 
                 val filtradas = todas.filter { trans ->
                     val coincideCategoria = _filtroCategoria.value.isNullOrBlank() ||
                             trans.categoria?.nombre?.contains(_filtroCategoria.value!!, ignoreCase = true) == true
 
                     val coincideTipo = _filtroTipo.value.isNullOrBlank() ||
-                            trans.categoria?.tipo.equals(_filtroTipo.value, ignoreCase = true)
+                            (trans.categoria?.tipo?.equals(_filtroTipo.value, ignoreCase = true) == true)
 
                     val coincideFecha = _filtroFecha.value.isNullOrBlank() ||
-                            trans.transaccion.fecha.contains(_filtroFecha.value!!) // depende del formato
+                            trans.transaccion.fecha.contains(_filtroFecha.value!!)
 
                     coincideCategoria && coincideTipo && coincideFecha
                 }

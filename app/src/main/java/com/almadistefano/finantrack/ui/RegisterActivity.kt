@@ -28,7 +28,7 @@ class RegisterActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_register) // Puedes reutilizar el layout
+        setContentView(R.layout.activity_register)
         val db = (application as FinantrackApplication).appDB
 
         repository = Repository(
@@ -49,30 +49,48 @@ class RegisterActivity : AppCompatActivity() {
         val btnRegister = findViewById<Button>(R.id.btnGoToRegister)
 
         btnRegister.text = "Registrarse"
-
         btnRegister.setOnClickListener {
-            val username = etUsername.text.toString()
-            val correo = etCorreo.text.toString()
+            val username = etUsername.text.toString().trim()
+            val correo = etCorreo.text.toString().trim()
             val password = etPassword.text.toString()
+
+            if (username.isEmpty()) {
+                etUsername.error = "Introduce un nombre de usuario"
+                return@setOnClickListener
+            }
+
+            if (correo.isEmpty()) {
+                etCorreo.error = "Introduce un correo"
+                return@setOnClickListener
+            }
+
+            if (!android.util.Patterns.EMAIL_ADDRESS.matcher(correo).matches()) {
+                etCorreo.error = "Correo no válido"
+                return@setOnClickListener
+            }
+
+            if (password.length < 6) {
+                etPassword.error = "La contraseña debe tener al menos 6 caracteres"
+                return@setOnClickListener
+            }
 
             lifecycleScope.launch {
                 val nuevoUsuario = Usuario(nombre = username, correo = correo, password = password)
                 repository.registrarUsuario(nuevoUsuario)
 
-                //Ahora login el usuario
                 val user = repository.loginUsuario(username, password)
                 if (user != null) {
                     val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
                     prefs.edit { putInt("usuario_id", user.id) }
 
-                    // 🔁 Sincronización completa
                     SyncManager(repository).syncAll(user.id)
 
                     Toast.makeText(this@RegisterActivity, "Registrado con éxito", Toast.LENGTH_SHORT).show()
                     startActivity(Intent(this@RegisterActivity, MainActivity::class.java))
                     finish()
+                } else {
+                    Toast.makeText(this@RegisterActivity, "Error al iniciar sesión después del registro", Toast.LENGTH_SHORT).show()
                 }
-
             }
         }
     }

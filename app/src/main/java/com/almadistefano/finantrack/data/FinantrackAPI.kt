@@ -16,7 +16,6 @@ class FinantrackAPI {
         const val BASE_URL = "http://10.0.2.2:8081/"
 
         fun getRetrofit2Api(): FinantrackAPIInterface {
-            // Añade logging
             val logging = HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
             }
@@ -27,7 +26,7 @@ class FinantrackAPI {
 
             return Retrofit.Builder()
                 .baseUrl(BASE_URL)
-                .client(client) // Usa el cliente con logging
+                .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(FinantrackAPIInterface::class.java)

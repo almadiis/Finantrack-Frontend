@@ -6,6 +6,15 @@
     android:padding="24dp"
     android:gravity="center">
 
+    <ImageView
+        android:id="@+id/ivLogo"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="90dp"
+        android:src="@drawable/logo_entero_finantrack"
+        android:contentDescription="Logo"/>
+
     <EditText
         android:id="@+id/etUsername"
         android:hint="Usuario"
@@ -19,6 +28,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
+    <!-- Botón de texto para resetear contraseña -->
+    <Button
+        android:id="@+id/btnForgotPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="¿Has olvidado tu contraseña?"
+        android:background="@android:color/transparent"
+        android:textColor="@color/purple_500"
+        android:textSize="14sp"
+        android:layout_gravity="end"
+        android:padding="8dp"
+        android:elevation="0dp"
+        android:stateListAnimator="@null" />
+
     <Button
         android:id="@+id/btnLogin"
         android:text="Iniciar sesión"
@@ -30,4 +53,5 @@
         android:text="Registrarse"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+
 </LinearLayout>

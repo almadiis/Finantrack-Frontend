@@ -20,8 +20,6 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import com.almadistefano.finantrack.data.LocalDataSource
 import com.almadistefano.finantrack.ui.LoginActivity
-import com.almadistefano.finantrack.ui.fragments.presupuestos.PresupuestosViewModel
-import com.almadistefano.finantrack.ui.fragments.presupuestos.PresupuestosViewModelFactory
 
 class PerfilFragment : Fragment() {
 
@@ -56,7 +54,6 @@ class PerfilFragment : Fragment() {
         val prefs = requireContext().getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         val userId = getUserId()
 
-        // Inicializamos el ViewModel con el usuario actualizado
         vm = ViewModelProvider(this, PerfilViewModelFactory(repository, userId))[PerfilViewModel::class.java]
 
         parentFragmentManager.setFragmentResultListener("usuario_actualizado", viewLifecycleOwner) { _, _ ->
